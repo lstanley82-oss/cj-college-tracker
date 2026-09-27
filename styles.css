@@ -1,0 +1,85 @@
+:root {
+  --bg:#070809;
+  --panel:#0e1014;
+  --panel2:#14171d;
+  --text:#f5f7fb;
+  --muted:#9da5b4;
+  --line:rgba(255,255,255,.10);
+  --red:#ef2b2d;
+  --red-soft:rgba(239,43,45,.16);
+  --green:#32c48d;
+  --amber:#e9b949;
+  --blue:#4d9fff;
+  --shadow:0 24px 60px rgba(0,0,0,.36);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#070809;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+body{background:radial-gradient(circle at 15% 0%,#181a20 0%,#090a0c 35%,#050607 100%)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.app-shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.sidebar{position:relative;overflow:hidden;border-right:1px solid var(--line);background:linear-gradient(180deg,#0a0b0e,#070809)}
+.sidebar::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(239,43,45,.22),transparent 24%),url('assets/cj-family.jpg') center bottom/cover no-repeat;filter:grayscale(1) contrast(1.1);opacity:.10;pointer-events:none}
+.side-inner{position:relative;z-index:1;padding:24px 17px;display:flex;flex-direction:column;min-height:100vh}
+.brand-script{font-size:52px;font-weight:950;font-style:italic;line-height:.9;color:var(--red);transform:skew(-7deg)}
+.brand-title{margin-top:8px;letter-spacing:.28em;text-transform:uppercase;font-size:12px;font-weight:800}
+.brand-tag{margin-top:14px;color:#c9ced8;font-size:10px;letter-spacing:.29em;line-height:1.7;text-transform:uppercase}
+.nav{display:flex;flex-direction:column;gap:7px;margin-top:28px}
+.nav button{border:1px solid transparent;background:transparent;color:#e7eaf1;text-align:left;padding:13px 14px;border-radius:13px;display:flex;gap:10px;align-items:center}
+.nav button:hover{background:rgba(255,255,255,.04)}
+.nav button.active{background:linear-gradient(90deg,rgba(239,43,45,.24),rgba(239,43,45,.06));border-color:rgba(239,43,45,.28);box-shadow:inset 3px 0 0 var(--red)}
+.nav .ico{width:22px;text-align:center}
+.side-foot{margin-top:auto;color:rgba(255,255,255,.78);padding:18px 5px 0;text-transform:uppercase;letter-spacing:.18em;font-size:15px;line-height:1.45}
+.side-foot small{display:block;margin-top:10px;color:var(--muted);font-size:9px;letter-spacing:.3em}
+.main{padding:18px 22px 34px;min-width:0}
+.topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.search{flex:1;max-width:620px}
+.search input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.13);color:var(--text);border-radius:14px;padding:13px 15px;outline:none}
+.account{display:flex;align-items:center;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:#252a33;display:grid;place-items:center;font-weight:850}
+.account .sub{color:var(--muted);font-size:11px}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);border-radius:11px;padding:9px 12px;font-weight:750}
+.btn:hover{background:rgba(255,255,255,.08)}
+.btn.red{background:var(--red);border-color:var(--red);color:white}
+.btn.small{padding:6px 9px;font-size:12px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+.hero-photo,.hero-copy,.panel,.metric{border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+.hero-photo{min-height:300px;background:linear-gradient(90deg,rgba(239,43,45,.23),transparent 26%),linear-gradient(0deg,rgba(0,0,0,.52),transparent 58%),url('assets/cj-family.jpg') center 22%/cover no-repeat}
+.hero-photo .caption{position:absolute;left:22px;bottom:20px;text-transform:uppercase;font-weight:950;font-size:34px;line-height:.98;letter-spacing:.03em}
+.hero-photo .caption small{display:block;margin-bottom:9px;color:#f1f3f7;font-size:10px;letter-spacing:.3em;font-weight:700}
+.hero-copy{padding:27px;min-height:300px;background:linear-gradient(90deg,rgba(239,43,45,.07),transparent 35%),radial-gradient(circle at 90% 20%,rgba(239,43,45,.16),transparent 23%),linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+.hero-copy::after{content:"LANE 01";position:absolute;right:18px;bottom:8px;color:rgba(255,255,255,.035);font-size:92px;font-weight:950;letter-spacing:.04em;pointer-events:none}
+.kicker{color:var(--red);font-weight:850;text-transform:uppercase;letter-spacing:.34em;font-size:10px}
+.hero-copy h1{font-size:64px;line-height:.9;margin:9px 0 0;text-transform:uppercase;letter-spacing:.01em}
+.hero-copy .meta{margin-top:14px;letter-spacing:.28em;text-transform:uppercase;font-size:13px}
+.hero-copy .quote{margin-top:22px;padding-left:14px;border-left:3px solid var(--red);color:#dde2ec;text-transform:uppercase;letter-spacing:.15em;line-height:1.65;font-size:12px}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:15px}
+.metric{padding:16px}
+.metric .n{font-size:32px;font-weight:920;line-height:1}
+.metric .l{margin-top:7px;font-size:14px}
+.metric .s{margin-top:5px;color:var(--muted);font-size:11px}
+.grid3{display:grid;grid-template-columns:1.2fr 1fr .56fr;gap:15px;margin-top:15px;align-items:start}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px;align-items:start}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 17px 10px}
+.panel-title{text-transform:uppercase;letter-spacing:.08em;font-weight:900;font-size:15px}
+.panel-title .accent{color:var(--red);margin-right:7px}
+.panel-link{color:#9dc3eb;font-size:11px}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{border-top:1px solid rgba(255,255,255,.06);padding:9px 11px;text-align:left;font-size:12px}
+th{color:var(--muted);text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+tr:hover td{background:rgba(255,255,255,.018)}
+.pill{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800;background:rgba(255,255,255,.09)}
+.pill.red{background:rgba(239,43,45,.19);color:#ffd0d0}.pill.blue{background:rgba(77,159,255,.17);color:#d4e9ff}.pill.green{background:rgba(50,196,141,.17);color:#c7f4df}.pill.amber{background:rgba(233,185,73,.16);color:#ffe6a2}
+.owner{display:inline-flex;min-width:34px;justify-content:center;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.09);font-size:10px;font-weight:800}.owner.cj{background:rgba(239,43,45,.22)}
+.motivation{min-height:340px;background:linear-gradient(180deg,rgba(239,43,45,.28),transparent 38%,rgba(0,0,0,.5)),url('assets/cj-family.jpg') 28% center/cover no-repeat;filter:saturate(.7)}
+.motivation .copy{position:absolute;left:18px;bottom:18px;font-size:28px;line-height:1;text-transform:uppercase;font-weight:950}.motivation .copy span{color:var(--red)}
+.page-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin:8px 0 14px}.page-head h2{margin:0;font-size:40px;text-transform:uppercase;line-height:1}.page-head p{margin:8px 0 0;color:var(--muted);max-width:760px}
+.watermark-page{position:relative}.watermark-page::after{content:attr(data-watermark);position:fixed;right:28px;bottom:18px;font-size:110px;font-weight:950;color:rgba(255,255,255,.025);text-transform:uppercase;pointer-events:none;z-index:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field label{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.14em;margin-bottom:5px;font-weight:800}.field input,.field select,.field textarea{width:100%;border-radius:10px;border:1px solid var(--line);background:#0b0d10;color:white;padding:9px 10px}.field textarea{min-height:76px;resize:vertical}.span2{grid-column:1/-1}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.76);display:grid;place-items:center;padding:18px;z-index:50}.modal{width:min(780px,100%);max-height:92vh;overflow:auto;border:1px solid var(--line);border-radius:20px;background:#0d1014;box-shadow:0 30px 90px #000}.modal-head,.modal-foot{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}.modal-head{border-bottom:1px solid var(--line)}.modal-body{padding:18px}.modal-foot{border-top:1px solid var(--line);justify-content:flex-end}
+.auth-screen{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr}.auth-photo{background:linear-gradient(90deg,rgba(239,43,45,.30),transparent 35%),linear-gradient(0deg,rgba(0,0,0,.55),transparent),url('assets/cj-family.jpg') center/cover no-repeat;position:relative}.auth-photo .auth-brand{position:absolute;left:34px;bottom:34px}.auth-brand .big{font-size:64px;font-weight:950;line-height:.9;text-transform:uppercase}.auth-brand .small{margin-top:10px;letter-spacing:.3em;text-transform:uppercase}.auth-card-wrap{display:grid;place-items:center;padding:30px}.auth-card{width:min(430px,100%);border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.03);padding:24px;box-shadow:var(--shadow)}.auth-card h1{margin:0;text-transform:uppercase;font-size:34px}.auth-card p{color:var(--muted)}.auth-card .field{margin-top:12px}.error{color:#ff9a9a;font-size:12px;margin-top:10px}.empty{padding:24px;color:var(--muted);text-align:center}
+@media(max-width:1300px){.metrics{grid-template-columns:repeat(3,1fr)}.grid3{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.motivation{min-height:260px}}
+@media(max-width:900px){.app-shell{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.side-inner{min-height:auto}.nav{display:grid;grid-template-columns:repeat(2,1fr)}.side-foot{display:none}.main{padding:14px}.hero-copy h1{font-size:48px}.metrics{grid-template-columns:repeat(2,1fr)}.auth-screen{grid-template-columns:1fr}.auth-photo{min-height:42vh}}
+@media(max-width:620px){.nav{grid-template-columns:1fr}.topbar{align-items:stretch;flex-direction:column}.account{justify-content:space-between}.metrics{grid-template-columns:1fr}.hero-copy h1{font-size:38px}.hero-photo{min-height:240px}.grid2{grid-template-columns:1fr}.page-head{flex-direction:column}.auth-brand .big{font-size:42px}.auth-photo{min-height:36vh}}
