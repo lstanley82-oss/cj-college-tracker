@@ -15,6 +15,16 @@
   let modal = null;
   let documentSchoolFilter = 'all';
   let documentStatusFilter = 'all';
+  const COLLEGE_SORT_KEY = 'cj-college-tracker-college-sort-v1';
+  const validCollegeSortModes = ['school_asc','school_desc','deadline_asc','deadline_desc','visit_attention','visit_complete','application_attention','application_advanced'];
+  let collegeSortMode = (() => {
+    try {
+      const saved = localStorage.getItem(COLLEGE_SORT_KEY);
+      return validCollegeSortModes.includes(saved) ? saved : 'deadline_asc';
+    } catch {
+      return 'deadline_asc';
+    }
+  })();
   let data = {
     family:[], colleges:[], tasks:[], recruiting:[], scholarships:[],
     comments:[], activity:[], documents:[], documentLinks:[]
@@ -148,6 +158,61 @@
   const head=t=>`<div class="panel-head"><div class="panel-title"><span class="accent">●</span>${esc(t)}</div><div class="panel-link">Live data</div></div>`;
   function taskSort(a,b){ const da=a.due_date||'9999-12-31', db=b.due_date||'9999-12-31'; return da.localeCompare(db); }
 
+  const visitRank = {'Not Scheduled':0,'Planned':1,'Virtual Visit':2,'Visited':3};
+  const applicationRank = {'Not Started':0,'In Progress':1,'Waiting':2,'Needs Review':3,'Complete':4,'Submitted':5};
+
+  function compareText(a,b){ return String(a||'').localeCompare(String(b||''),undefined,{sensitivity:'base'}); }
+  function compareDeadline(a,b,dir=1){
+    const da=a.application_deadline || '9999-12-31';
+    const db=b.application_deadline || '9999-12-31';
+    const cmp=da.localeCompare(db);
+    if(cmp!==0) return cmp*dir;
+    return compareText(a.name,b.name);
+  }
+  function sortColleges(rows){
+    const list=rows.slice();
+    list.sort((a,b)=>{
+      if(collegeSortMode==='school_asc') return compareText(a.name,b.name);
+      if(collegeSortMode==='school_desc') return compareText(b.name,a.name);
+      if(collegeSortMode==='deadline_asc') return compareDeadline(a,b,1);
+      if(collegeSortMode==='deadline_desc') return compareDeadline(a,b,-1);
+      if(collegeSortMode==='visit_attention' || collegeSortMode==='visit_complete'){
+        const direction=collegeSortMode==='visit_attention'?1:-1;
+        const av=visitRank[a.visit_status||'Not Scheduled'] ?? 0;
+        const bv=visitRank[b.visit_status||'Not Scheduled'] ?? 0;
+        if(av!==bv) return (av-bv)*direction;
+        return compareDeadline(a,b,1);
+      }
+      if(collegeSortMode==='application_attention' || collegeSortMode==='application_advanced'){
+        const direction=collegeSortMode==='application_attention'?1:-1;
+        const av=applicationRank[a.application_status||'Not Started'] ?? 0;
+        const bv=applicationRank[b.application_status||'Not Started'] ?? 0;
+        if(av!==bv) return (av-bv)*direction;
+        return compareDeadline(a,b,1);
+      }
+      return compareDeadline(a,b,1);
+    });
+    return list;
+  }
+
+  function rememberCollegeSort(mode){
+    if(!validCollegeSortModes.includes(mode)) return;
+    collegeSortMode=mode;
+    try { localStorage.setItem(COLLEGE_SORT_KEY,mode); } catch {}
+  }
+
+  function sortLabel(field){
+    const active={
+      school:['school_asc','school_desc'],
+      deadline:['deadline_asc','deadline_desc'],
+      visit:['visit_attention','visit_complete'],
+      application:['application_attention','application_advanced']
+    }[field]||[];
+    if(!active.includes(collegeSortMode)) return '';
+    const reversed=['school_desc','deadline_desc','visit_complete','application_advanced'].includes(collegeSortMode);
+    return `<span class="sort-arrow" aria-hidden="true">${reversed?'↓':'↑'}</span>`;
+  }
+
   function taskTable(rows){
     return `${head("CJ's Next Moves")}<div class="table-wrap"><table><thead><tr><th>Task</th><th>Owner</th><th>Due</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>${rows.length?rows.map(t=>`<tr><td><button class="text-link" data-edit="task" data-id="${t.id}">${esc(t.title)}</button></td><td><span class="owner ${t.owner_name==='CJ'?'cj':''}">${esc(t.owner_name||'Unassigned')}</span></td><td>${fmt(t.due_date)}</td><td><select class="status-quick ${pillClass(t.status)}" data-task-status="${t.id}">${taskStatuses.map(s=>`<option${selected(s,t.status)}>${esc(s)}</option>`).join('')}</select></td><td>${commentsForTask(t.id).length?`<button class="comment-count" data-edit="task" data-id="${t.id}">${commentsForTask(t.id).length} comment${commentsForTask(t.id).length===1?'':'s'}</button>`:'—'}</td><td><button class="btn tiny" data-edit="task" data-id="${t.id}">Edit</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No tasks yet.</td></tr>`}</tbody></table></div>`;
   }
@@ -156,8 +221,11 @@
     return `${head('Recruiting')}<div class="table-wrap"><table><thead><tr><th>Coach / School</th><th>Last Contact</th><th>Follow Up</th><th>Status</th><th></th></tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td><strong>${esc(r.coach_name)}</strong><br><span style="color:var(--muted)">${esc(r.school_name||collegeName(r.college_id)||'')}</span></td><td>${fmt(r.last_contact_date)}</td><td>${fmt(r.follow_up_date)}</td><td><span class="pill ${pillClass(r.status)}">${esc(r.status||'Active')}</span></td><td><button class="btn tiny" data-edit="recruiting" data-id="${r.id}">Edit</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">No recruiting contacts yet.</td></tr>`}</tbody></table></div>`;
   }
 
-  function collegeTable(rows){
-    return `${head('Colleges')}<div class="table-wrap"><table><thead><tr><th>School</th><th>Deadline</th><th>Visit</th><th>Application</th><th>Documents</th><th></th></tr></thead><tbody>${rows.length?rows.map(c=>{const docs=documentsForCollege(c.id);return `<tr><td><button class="text-link" data-edit="college" data-id="${c.id}">${esc(c.name)}</button></td><td>${fmt(c.application_deadline)}</td><td>${esc(c.visit_status||'Not Scheduled')}</td><td><span class="pill ${pillClass(c.application_status)}">${esc(c.application_status||'Not Started')}</span></td><td><button class="doc-count" data-docschool="${c.id}">${docs.length} doc${docs.length===1?'':'s'}</button></td><td><button class="btn tiny" data-edit="college" data-id="${c.id}">Edit</button></td></tr>`}).join(''):`<tr><td colspan="6" class="empty">No colleges yet.</td></tr>`}</tbody></table></div>`;
+  function collegeTable(rows, sortable=false){
+    const headers=sortable
+      ? `<tr><th><button class="sort-head" data-college-sort-field="school">School ${sortLabel('school')}</button></th><th><button class="sort-head" data-college-sort-field="deadline">Deadline ${sortLabel('deadline')}</button></th><th><button class="sort-head" data-college-sort-field="visit">Visit ${sortLabel('visit')}</button></th><th><button class="sort-head" data-college-sort-field="application">Application ${sortLabel('application')}</button></th><th>Documents</th><th></th></tr>`
+      : `<tr><th>School</th><th>Deadline</th><th>Visit</th><th>Application</th><th>Documents</th><th></th></tr>`;
+    return `${head('Colleges')}<div class="table-wrap"><table><thead>${headers}</thead><tbody>${rows.length?rows.map(c=>{const docs=documentsForCollege(c.id);return `<tr><td><button class="text-link" data-edit="college" data-id="${c.id}">${esc(c.name)}</button></td><td>${fmt(c.application_deadline)}</td><td>${esc(c.visit_status||'Not Scheduled')}</td><td><span class="pill ${pillClass(c.application_status)}">${esc(c.application_status||'Not Started')}</span></td><td><button class="doc-count" data-docschool="${c.id}">${docs.length} doc${docs.length===1?'':'s'}</button></td><td><button class="btn tiny" data-edit="college" data-id="${c.id}">Edit</button></td></tr>`}).join(''):`<tr><td colspan="6" class="empty">No colleges yet.</td></tr>`}</tbody></table></div>`;
   }
 
   function scholarTable(rows){
@@ -180,7 +248,19 @@
   }
 
   function collegesPage(){
-    return pageShell('Colleges','CJ’s active college list, deadlines, visits, majors, cost, application status, and linked documents.','Colleges','+ Add college','college',`<div class="panel">${collegeTable(data.colleges)}</div>`);
+    const rows=sortColleges(data.colleges);
+    const sortOptions=[
+      ['deadline_asc','Deadline: earliest first'],
+      ['deadline_desc','Deadline: latest first'],
+      ['visit_attention','Visit: attention first'],
+      ['visit_complete','Visit: completed first'],
+      ['application_attention','Application: attention first'],
+      ['application_advanced','Application: most advanced first'],
+      ['school_asc','School: A → Z'],
+      ['school_desc','School: Z → A']
+    ];
+    const toolbar=`<div class="college-sortbar"><div class="field"><label>Sort by</label><select id="collegeSortMode">${sortOptions.map(([v,l])=>`<option value="${v}"${selected(v,collegeSortMode)}>${esc(l)}</option>`).join('')}</select></div><div class="sort-note">Your sort choice is remembered on this device. On desktop, you can also click School, Deadline, Visit, or Application.</div></div>`;
+    return pageShell('Colleges','CJ’s active college list, deadlines, visits, majors, cost, application status, and linked documents.','Colleges','+ Add college','college',`${toolbar}<div class="panel">${collegeTable(rows,true)}</div>`);
   }
 
   function recruitingPage(){
@@ -214,6 +294,18 @@
     document.querySelectorAll('[data-task-status]').forEach(s=>s.onchange=()=>quickTaskStatus(s.dataset.taskStatus,s.value));
     const sf=document.getElementById('documentSchoolFilter'); if(sf) sf.onchange=()=>{documentSchoolFilter=sf.value;renderView();};
     const st=document.getElementById('documentStatusFilter'); if(st) st.onchange=()=>{documentStatusFilter=st.value;renderView();};
+    const cs=document.getElementById('collegeSortMode'); if(cs) cs.onchange=()=>{rememberCollegeSort(cs.value);renderView();};
+    document.querySelectorAll('[data-college-sort-field]').forEach(b=>b.onclick=()=>{
+      const field=b.dataset.collegeSortField;
+      const next={
+        school: collegeSortMode==='school_asc'?'school_desc':'school_asc',
+        deadline: collegeSortMode==='deadline_asc'?'deadline_desc':'deadline_asc',
+        visit: collegeSortMode==='visit_attention'?'visit_complete':'visit_attention',
+        application: collegeSortMode==='application_attention'?'application_advanced':'application_attention'
+      }[field];
+      rememberCollegeSort(next);
+      renderView();
+    });
   }
 
   function getRecord(type,id){

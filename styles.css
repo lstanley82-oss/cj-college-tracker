@@ -122,3 +122,12 @@ tr:hover td{background:rgba(255,255,255,.018)}
 .toast{position:fixed;right:20px;bottom:20px;z-index:90;background:#15191f;color:white;border:1px solid var(--line);border-left:3px solid var(--red);padding:11px 14px;border-radius:11px;box-shadow:var(--shadow);font-size:12px}
 @media(max-width:900px){.filterbar{grid-template-columns:1fr 1fr}.filter-summary{grid-column:1/-1;text-align:left;padding:0}.mini-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.college-check-grid{grid-template-columns:1fr}.comment-add{grid-template-columns:1fr}.filterbar{grid-template-columns:1fr}.mini-stats{grid-template-columns:1fr 1fr}}
+
+
+/* v1.2 college sorting */
+.college-sortbar{display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:14px;align-items:end;margin-bottom:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.sort-note{color:var(--muted);font-size:11px;line-height:1.55;padding-bottom:8px}
+.sort-head{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:inherit;text-transform:inherit;letter-spacing:inherit;padding:0;cursor:pointer;white-space:nowrap}
+.sort-head:hover{color:var(--text)}
+.sort-arrow{color:var(--red);margin-left:4px;font-size:10px}
+@media(max-width:700px){.college-sortbar{grid-template-columns:1fr}.sort-note{padding-bottom:0}.sort-head{cursor:default}}
